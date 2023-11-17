@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "stm"
+version = "0.1.0"
+description = ""
+authors = ["yuugo0724 <ygaoqiao742@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pynamodb = "^5.5.0"
+fastapi = "^0.101.1"
+uvicorn = "^0.23.2"
+mangum = "^0.17.0"
+boto3 = "^1.28.42"
+pynamodb-attributes = "^0.4.0"
+bcrypt = "^4.0.1"
+passlib = "^1.7.4"
+pytest = "^7.4.2"
+moto = "^4.2.5"
+python-dotenv = "^1.0.0"
+jose = "^1.0.0"
+python-jose = "^3.3.0"
+python-multipart = "^0.0.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
