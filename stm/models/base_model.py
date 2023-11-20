@@ -19,11 +19,11 @@ class BaseModel(Model):
     try:
       item = cls.get(hash_key, range_key=range_key) if range_key else cls.get(hash_key)
       if item.deleted_at is not None:
-        raise ItemAlreadyDeletedError
+        raise ItemAlreadyDeletedError()
       if version and item.version != version:
-        raise VersionMismatchError
+        raise VersionMismatchError()
     except DoesNotExist:
-      raise ItemNotFoundError
+      raise ItemNotFoundError()
     return item
 
   @classmethod

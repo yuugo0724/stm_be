@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status, Security
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
@@ -19,7 +19,7 @@ def authenticate_user(username: str, password: str):
   if user_item.check_password(plain_password = password, hashed_password = user_item.hashed_password):
     return user_item
   else:
-    raise AuthenticationException
+    raise AuthenticationException()
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
   to_encode = data.copy()
@@ -36,10 +36,10 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
     username: str = payload.get("sub")
     if username is None:
-      raise CredentialException
+      raise CredentialException()
     user = User.get_item(username)
     if user is None:
-      raise CredentialException
+      raise CredentialException()
     return user
   except JWTError:
-    raise CredentialException
+    raise CredentialException()
