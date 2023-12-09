@@ -6,5 +6,5 @@ from .common import (
 )
 
 @register_exception_handler(RequestValidationError)
-async def validation_exception_handler(request, exc):
+async def validation_exception_handler(request, exc: RequestValidationError):
   return create_exception_response(exc)

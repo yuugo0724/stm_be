@@ -9,6 +9,7 @@ from schemas.user import (
 )
 from models.user import User
 from handlers.dynamodb_handlers.backoff_handler import exponential_backoff_handler
+from handlers.dynamodb_handlers.idempotency_handler import check_idempotency
 
 def create_user(user: UserCreate):
   user_item = User(
@@ -23,7 +24,7 @@ def create_user(user: UserCreate):
   return user_item
 
 def update_user(username: str, user: UserUpdate):
-  user_item = User.get_item(username)
+  user_item = User.get_item(hash_key = username, version = user.version)
   for key, value in vars(user).items():
     if value is not None:
       setattr(user_item, key, value)

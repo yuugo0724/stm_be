@@ -19,6 +19,7 @@ def exponential_backoff_handler(operation, max_retries=5, base_delay=1):
         print(e.cause.response['Error']['Code'])
         error_code = e.cause.response['Error']['Code']
         if error_code == 'ConditionalCheckFailedException':
+          logger.debug("書き込みエラー: %s", e)
           raise ItemAlreadyExistsError() from e
       # ログを出力し、リトライ処理を行います。
       logger.error(f"書き込みエラー: {e}")

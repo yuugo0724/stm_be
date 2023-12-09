@@ -1,5 +1,6 @@
 # サードパーティのライブラリをインポート
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 # プロジェクト内のモジュールをインポート
 from api.v1.endpoints import router
@@ -13,6 +14,19 @@ from handlers.error_handlers import (
 )
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",  # Next.jsのサーバー
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(router)
 app.include_router(debug_router)
 

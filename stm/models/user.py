@@ -6,7 +6,7 @@ from pynamodb.attributes import UnicodeAttribute, NumberAttribute, VersionAttrib
 from pynamodb_attributes import UUIDAttribute
 
 # プロジェクト内のモジュールをインポート
-from models.base_model import BaseModel
+from models.base_model import BaseModel, ShortDateAttribute, LongDateAttribute
 
 class User(BaseModel):
   class Meta(BaseModel.Meta):
@@ -44,4 +44,4 @@ class User(BaseModel):
   version = VersionAttribute()
   client_request_token = UnicodeAttribute(default = None, null=True)  # 必要に応じてnullを設定
   # deleted_atの扱いを変更。nullを許容し、実際に削除が行われたときにタイムスタンプを設定
-  deleted_at = UTCDateTimeAttribute(default = None, null=True)
+  deleted_at = LongDateAttribute(default = None, null=True)
