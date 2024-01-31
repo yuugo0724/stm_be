@@ -1,6 +1,6 @@
 """
 未実装
-いつかやる 
+いつかやる
 """
 
 from fastapi import FastAPI, Request, HTTPException
@@ -22,6 +22,6 @@ async def detect_invalid_access(request: Request, call_next):
     # 例: 同じIPからの短時間の間の多数のリクエスト、異常なアクセスパターンなど
     # 不正なアクセスと判断した場合
     # raise HTTPException(status_code=400, detail="Invalid access detected")
-    
+
     response = await call_next(request)
     return response

@@ -4,24 +4,31 @@
 from pydantic import BaseModel
 
 class UserBase(BaseModel):
+  username: str
+  email: str
+  version: int
   client_request_token: str
 
-class UserCreate(UserBase):
+class SignUpUser(BaseModel):
   username: str
-  email: str
   password: str
+  email: str
+  client_request_token: str
 
-class UserUpdate(UserBase):
+class UserCreate(BaseModel):
+  pass
+
+class UserUpdate(BaseModel):
   email: str
   version: int
+  client_request_token: str
 
-class UserDelete(UserBase):
+class UserDelete(BaseModel):
   version: int
+  client_request_token: str
 
 class UserResponse(UserBase):
-  username: str
-  email: str
-  version: int
+  pass
 
 class UserGetResponse(UserResponse):
   pass

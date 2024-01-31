@@ -1,12 +1,15 @@
 # 標準ライブラリをインポート
 import bcrypt
+from datetime import datetime
 
 # サードパーティのライブラリをインポート
 from pynamodb.attributes import UnicodeAttribute, NumberAttribute, VersionAttribute, UTCDateTimeAttribute, BooleanAttribute, Attribute
 from pynamodb_attributes import UUIDAttribute
 
 # プロジェクト内のモジュールをインポート
-from models.base_model import BaseModel, ShortDateAttribute, LongDateAttribute
+from models.attribute.short_date_attribute import ShortDateAttribute
+from models.attribute.long_date_attribute import LongDateAttribute
+from models.base_model import BaseModel
 
 class User(BaseModel):
   class Meta(BaseModel.Meta):
@@ -41,7 +44,8 @@ class User(BaseModel):
   # schemaではpasswordを受け取り、modelではhashed_passwordを保存する
   hashed_password = UnicodeAttribute()
   email = UnicodeAttribute()
-  version = VersionAttribute()
-  client_request_token = UnicodeAttribute(default = None, null=True)  # 必要に応じてnullを設定
-  # deleted_atの扱いを変更。nullを許容し、実際に削除が行われたときにタイムスタンプを設定
-  deleted_at = LongDateAttribute(default = None, null=True)
+  # version = VersionAttribute()
+  # client_request_token = UnicodeAttribute(default = None, null=True)  # 必要に応じてnullを設定
+  # # deleted_atの扱いを変更。nullを許容し、実際に削除が行われたときにタイムスタンプを設定
+  # deleted_at = LongDateAttribute(default = None, null=True)
+  # created_at = LongDateAttribute(default = lambda: datetime.now())

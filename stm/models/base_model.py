@@ -1,8 +1,13 @@
+# サードパーティのライブラリをインポート
 from pynamodb.models import Model
-from pynamodb.attributes import UTCDateTimeAttribute
 from pynamodb.exceptions import DoesNotExist
-from datetime import datetime
+from datetime import datetime, timezone
+from pynamodb.attributes import UnicodeAttribute, NumberAttribute, VersionAttribute, UTCDateTimeAttribute, BooleanAttribute, Attribute
+from pynamodb_attributes import UUIDAttribute
+
 # プロジェクト内のモジュールをインポート
+from models.attribute.short_date_attribute import ShortDateAttribute
+from models.attribute.long_date_attribute import LongDateAttribute
 from core.logger_config import logger
 from exceptions.dynamodb_exceptions import (
   ItemNotFoundError,
@@ -17,6 +22,18 @@ from core.config import AWS_REGION
 class BaseModel(Model):
   class Meta:
     region = AWS_REGION
+
+  version = VersionAttribute()
+  client_request_token = UnicodeAttribute(default = None, null=True)  # 必要に応じてnullを設定
+  # deleted_atの扱いを変更。nullを許容し、実際に削除が行われたときにタイムスタンプを設定
+  deleted_at = LongDateAttribute(default = None, null=True)
+  created_at = LongDateAttribute(default = lambda: datetime.now())
+  updated_at = LongDateAttribute(default = lambda: datetime.now())
+
+  def save(self, condition=None, **expected_values):
+    # 保存操作のたびにupdated_atを更新
+    self.updated_at = datetime.now(timezone.utc)
+    super(BaseModel, self).save(condition=condition, **expected_values)
 
   @classmethod
   def get_item(cls, hash_key, range_key = None, version = None):
@@ -54,21 +71,3 @@ class BaseModel(Model):
   @classmethod
   def convert_to_iso8601(cls, date):
     return datetime.isoformat(date)
-
-class ShortDateAttribute(UTCDateTimeAttribute):
-  def serialize(self, value):
-    # YYYY-MM-DD形式の文字列に変換して保存
-    return value.strftime('%Y-%m-%d')
-
-  def deserialize(self, value):
-    # 文字列からdatetimeオブジェクトに変換
-    return datetime.strptime(value, '%Y-%m-%d')
-
-class LongDateAttribute(UTCDateTimeAttribute):
-  def serialize(self, value):
-    # YYYY-MM-DD HH:MM:SS形式の文字列に変換して保存（秒まで指定）
-    return value.strftime('%Y-%m-%d %H:%M:%S.%f')
-
-  def deserialize(self, value):
-    # 文字列からdatetimeオブジェクトに変換
-    return datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')

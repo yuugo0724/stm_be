@@ -4,7 +4,7 @@ from datetime import date
 from pydantic import BaseModel, Field
 from core.logger_config import logger
 
-class CustomerManageBase(BaseModel):
+class StmBase(BaseModel):
   address: str = Field(..., description="住所")
   age: int = Field(..., description="年齢")
   annual_income: int = Field(..., description="年収")
@@ -33,31 +33,31 @@ class CustomerManageBase(BaseModel):
   status: str = Field(..., description="ステータス")
   whole_life_insurance_flag: bool = Field(..., description="終身保険フラグ")
 
-class CustomerManageCreate(CustomerManageBase):
+class StmCreate(StmBase):
   client_request_token: str = Field(..., description="クライアントリクエストトークン")
 
-class CustomerManageUpdate(CustomerManageBase):
+class StmUpdate(StmBase):
   version: int = Field(..., description="バージョン")
   client_request_token: str = Field(..., description="クライアントリクエストトークン")
 
-class CustomerManageDelete(BaseModel):
+class StmDelete(BaseModel):
   version: int = Field(..., description="バージョン")
   client_request_token: str = Field(..., description="クライアントリクエストトークン")
 
-class CustomerManageResponse(CustomerManageBase):
+class StmResponse(StmBase):
   id: str = Field(..., description="ID")
   username: str = Field(..., description="ユーザー名")
   version: int = Field(..., description="バージョン")
   client_request_token: str = Field(..., description="クライアントリクエストトークン")
 
-class CustomerManageGetResponse(CustomerManageResponse):
+class StmGetResponse(StmResponse):
   pass
 
-class CustomerManageCreateResponse(CustomerManageResponse):
+class StmCreateResponse(StmResponse):
   pass
 
-class CustomerManageUpdateResponse(CustomerManageResponse):
+class StmUpdateResponse(StmResponse):
   pass
 
-class CustomerManageDeleteResponse(CustomerManageResponse):
+class StmDeleteResponse(StmResponse):
   pass

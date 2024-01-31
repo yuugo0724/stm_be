@@ -12,6 +12,8 @@ from handlers.error_handlers import (
   unexpected_errors,
   auth_errors
 )
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 app = FastAPI()
 
@@ -19,6 +21,7 @@ origins = [
     "http://localhost:3000",  # Next.jsのサーバー
 ]
 
+# ミドルウェアの設定
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -26,6 +29,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost:3000", "127.0.0.1:3000", "localhost", "127.0.0.1"])
+# app.add_middleware(HTTPSRedirectMiddleware)
 
 app.include_router(router)
 app.include_router(debug_router)

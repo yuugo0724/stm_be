@@ -13,9 +13,9 @@ from pynamodb_attributes import UUIDAttribute
 # プロジェクト内のモジュールをインポート
 from models.base_model import BaseModel, ShortDateAttribute, LongDateAttribute
 
-class CustomerManage(BaseModel):
+class Stm(BaseModel):
   class Meta(BaseModel.Meta):
-    table_name = 'customer_manage'
+    table_name = 'stm'
   # lambdaでdefaultを設定しないと、クラスがインポートされたときにのみuuid4()が実行されるため、同じidが設定されてしまう
   id = UnicodeAttribute(hash_key= True, default = lambda: str(uuid4()))
   username = UnicodeAttribute()
@@ -73,7 +73,3 @@ class CustomerManage(BaseModel):
   status = UnicodeAttribute()
   # 終身保険フラグ
   whole_life_insurance_flag = BooleanAttribute()
-  version = VersionAttribute()
-  client_request_token = UnicodeAttribute(default = None, null=True)  # 必要に応じてnullを設定
-  # deleted_atの扱いを変更。nullを許容し、実際に削除が行われたときにタイムスタンプを設定
-  deleted_at = LongDateAttribute(default = None, null=True)
