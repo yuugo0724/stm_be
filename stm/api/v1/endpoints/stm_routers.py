@@ -35,7 +35,8 @@ def read_stm_list_endpoint(current_user: str = Depends(current_user_service)):
       (Stm.username == current_user.username)
     )
   )
-  return stm_item_list
+  stm_item_list_sorted = sorted(stm_item_list, key=lambda item: item.created_at, reverse=True)
+  return stm_item_list_sorted
 
 # @router.get("/", response_model = List[StmGetResponse])
 # def read_stm_list(current_user: str = Depends(get_current_user)):
