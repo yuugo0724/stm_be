@@ -13,24 +13,33 @@ from handlers.error_handlers import (
   auth_errors
 )
 from starlette.middleware.trustedhost import TrustedHostMiddleware
-from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+from core.config import ENVIRONMENT
+from mangum import Mangum
 
 app = FastAPI()
-
+# handler = Mangum(app) # 本番
 origins = [
-    "http://localhost:3000",  # Next.jsのサーバー
+  "http://localhost:3000", # ローカル
+  # "https://stm-fe.pages.dev", # 本番
 ]
-
+app.add_middleware(
+  TrustedHostMiddleware,
+  allowed_hosts=[
+    "localhost:3000", # ローカル
+    "127.0.0.1:3000", # ローカル
+    "localhost", # ローカル
+    "127.0.0.1", # ローカル
+    # "https://stm-fe.pages.dev", # 本番
+  ]
+  )
 # ミドルウェアの設定
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+  CORSMiddleware,
+  allow_origins=origins,
+  allow_credentials=True,
+  allow_methods=["*"],
+  allow_headers=["*"],
 )
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost:3000", "127.0.0.1:3000", "localhost", "127.0.0.1"])
-# app.add_middleware(HTTPSRedirectMiddleware)
 
 app.include_router(router)
 app.include_router(debug_router)

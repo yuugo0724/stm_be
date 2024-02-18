@@ -36,6 +36,8 @@ def read_stm_list_endpoint(current_user: str = Depends(current_user_service)):
     )
   )
   stm_item_list_sorted = sorted(stm_item_list, key=lambda item: item.created_at, reverse=True)
+  logger.debug("■ソート確認")
+  logger.debug([item.__dict__ for item in stm_item_list_sorted])  # 配列の中身を全て展開して表示
   return stm_item_list_sorted
 
 # @router.get("/", response_model = List[StmGetResponse])

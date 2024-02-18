@@ -8,7 +8,7 @@ from core.config import (
   REFRESH_TOKEN_SECRET_KEY,
   ALGORITHM
 )
-from stm.exceptions.auth_exceptions import (
+from exceptions.auth_exceptions import (
   AuthenticationException,
   CredentialException
 )

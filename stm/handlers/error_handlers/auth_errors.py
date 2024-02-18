@@ -1,5 +1,5 @@
 # PydanticのValidationErrorはFastAPIのRequestValidationErrorに変換されて送出される
-from stm.exceptions.auth_exceptions import (
+from exceptions.auth_exceptions import (
   AuthenticationException,
   CredentialException
 )

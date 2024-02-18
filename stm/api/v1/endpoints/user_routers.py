@@ -18,7 +18,7 @@ from schemas.user import (
 )
 from services.user import user_service
 from core.logger_config import logger
-from stm.services.decorator.check_idempotency import (
+from services.decorator.check_idempotency import (
   check_idempotency_by_schema,
   check_idempotency_by_key_and_schema
 )
