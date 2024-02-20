@@ -5,6 +5,7 @@ from datetime import datetime
 # サードパーティのライブラリをインポート
 from pynamodb.attributes import UnicodeAttribute, NumberAttribute, VersionAttribute, UTCDateTimeAttribute, BooleanAttribute, Attribute
 from pynamodb_attributes import UUIDAttribute
+from passlib.hash import pbkdf2_sha256  # bcryptからpasslibへ変更
 
 # プロジェクト内のモジュールをインポート
 from models.attribute.short_date_attribute import ShortDateAttribute
@@ -21,19 +22,19 @@ class User(BaseModel):
 
   @password.setter
   def password(self, plaintext_password):
-    # ハッシュ化の処理
+    # ハッシュ化の処理をpasslibで行う
     hashed = self.get_hashed_password(plaintext_password)
     self.__password = hashed
     self.hashed_password = hashed
 
   def get_hashed_password(self, plain_password):
-    # plain_passwordをbcryptでソルトを用いてハッシュ化する
-    hashed = bcrypt.hashpw(plain_password.encode("utf-8"), bcrypt.gensalt())
-    return hashed.decode("utf-8")
+    # plain_passwordをpbkdf2_sha256でハッシュ化する
+    hashed = pbkdf2_sha256.hash(plain_password)
+    return hashed
 
   def check_password(self, plain_password, hashed_password):
     # ハッシュとplain_passwordを照合
-    return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
+    return pbkdf2_sha256.verify(plain_password, hashed_password)
 
   # hash_key（パーティションキー）
   # range_key（ソートキー）※今回はなし
