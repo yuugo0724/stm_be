@@ -3,7 +3,6 @@ from typing import List
 
 # サードパーティのライブラリをインポート
 from fastapi import APIRouter, Depends, File, UploadFile, Form
-import pandas as pd
 from io import StringIO
 
 # プロジェクト内のモジュールをインポート
