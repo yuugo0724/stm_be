@@ -18,7 +18,7 @@ from schemas.stm import (
   StmUpdate,
   StmDelete
 )
-from schemas.schema_mapping import schema_to_dtype
+from schemas.schema_mapping import schema_to_type
 from services.stm import stm_service
 from core.logger_config import logger
 from services.auth_service import current_user_service
@@ -64,16 +64,33 @@ def create_stm_endpoint(stm: StmCreate, current_user: str = Depends(current_user
 async def upload_stm(
     client_request_token: str = Form(...),
     file: UploadFile = File(...),
-    current_user: str = Depends(current_user_service
-  )):
+    current_user: str = Depends(current_user_service)):
   # CSVファイルを文字列として読み込む
   content = await file.read()
   string_io = StringIO(content.decode("utf-8"))
-  # pandasを使用してCSVを読み込み、DynamoDBに適した形式に変換
-  dtype = schema_to_dtype(StmBase)
-  logger.debug("dtype：%s", dtype)
-  df = pd.read_csv(string_io, dtype=dtype)
-  records = df.to_dict(orient="records")
+
+  # schema_to_type関数を使用して型情報を取得
+  csv_type = schema_to_type(StmBase)
+
+  # CSVを読み込み、DynamoDBに適した形式に変換
+  import csv
+  records = []
+  reader = csv.DictReader(string_io)
+  for row in reader:
+      # 各列のデータを適切な型に変換
+      for field, value in row.items():
+          if field in csv_type:
+              try:
+                  # 型変換関数がある場合（例：日付型）
+                  if callable(csv_type[field]):
+                      row[field] = csv_type[field](value)
+                  else:
+                      # 基本型（int, float, str）の変換
+                      row[field] = csv_type[field](value)
+              except ValueError as e:
+                  logger.error(f"型変換エラー：フィールド {field}、値 {value}、エラー {e}")
+                  # 適切なエラーハンドリングをここに記述
+      records.append(row)
   logger.debug("csvファイルの中身：%s", records)
   stm_service.upload_stm(records, current_user, client_request_token)
   return {"message": "CSVファイルが正常にアップロードされ、DynamoDBにデータが挿入されました。"}
