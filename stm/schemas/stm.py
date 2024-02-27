@@ -36,6 +36,9 @@ class StmBase(BaseModel):
 class StmCreate(StmBase):
   client_request_token: str = Field(..., description="クライアントリクエストトークン")
 
+class StmUpload(StmBase):
+  pass
+
 class StmUpdate(StmBase):
   version: int = Field(..., description="バージョン")
   client_request_token: str = Field(..., description="クライアントリクエストトークン")

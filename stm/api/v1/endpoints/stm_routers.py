@@ -2,20 +2,23 @@
 from typing import List
 
 # サードパーティのライブラリをインポート
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile, Form
+import pandas as pd
+from io import StringIO
 
 # プロジェクト内のモジュールをインポート
 from models.stm import Stm
 from schemas.stm import (
-  StmResponse,
   StmGetResponse,
   StmCreateResponse,
   StmUpdateResponse,
   StmDeleteResponse,
+  StmBase,
   StmCreate,
   StmUpdate,
   StmDelete
 )
+from schemas.schema_mapping import schema_to_dtype
 from services.stm import stm_service
 from core.logger_config import logger
 from services.auth_service import current_user_service
@@ -56,6 +59,24 @@ def create_stm_endpoint(stm: StmCreate, current_user: str = Depends(current_user
   stm_item = stm_service.create_stm(stm, current_user)
   logger.debug("レスポンス：%s", stm_item.__dict__)
   return stm_item
+
+@router.post("/upload")
+async def upload_stm(
+    client_request_token: str = Form(...),
+    file: UploadFile = File(...),
+    current_user: str = Depends(current_user_service
+  )):
+  # CSVファイルを文字列として読み込む
+  content = await file.read()
+  string_io = StringIO(content.decode("utf-8"))
+  # pandasを使用してCSVを読み込み、DynamoDBに適した形式に変換
+  dtype = schema_to_dtype(StmBase)
+  logger.debug("dtype：%s", dtype)
+  df = pd.read_csv(string_io, dtype=dtype)
+  records = df.to_dict(orient="records")
+  logger.debug("csvファイルの中身：%s", records)
+  stm_service.upload_stm(records, current_user, client_request_token)
+  return {"message": "CSVファイルが正常にアップロードされ、DynamoDBにデータが挿入されました。"}
 
 @router.put("/{id}", response_model = StmUpdateResponse)
 def update_stm_endpoint(id: str, stm: StmUpdate, current_user: str = Depends(current_user_service)):

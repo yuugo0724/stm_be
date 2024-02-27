@@ -6,6 +6,7 @@ from uuid import UUID
 from schemas.stm import (
   StmCreate,
   StmUpdate,
+  StmUpload,
   StmDelete
 )
 from models.stm import Stm
@@ -26,6 +27,19 @@ def create_stm(stm: StmCreate, current_user):
   # 指数バックオフでitemを保存
   exponential_backoff_handler(lambda: stm_item.save(condition))
   return stm_item
+
+def upload_stm(records, current_user, client_request_token):
+  username = current_user.username
+  for record in records:
+    try:
+      logger.debug("record：%s", record)
+      validated_record = StmUpload(**record)
+      logger.debug("バリデーション後のrecord：%s", validated_record)
+      stm_item = Stm(username = username, client_request_token = client_request_token, **validated_record.model_dump())
+      logger.debug("stm_item：%s", stm_item.__dict__)
+      exponential_backoff_handler(lambda: stm_item.save())
+    except Exception as e:
+      logger.error("エラー：%s", e)
 
 def update_stm(stm: StmUpdate, id, current_user):
   username = current_user.username
