@@ -4,7 +4,7 @@ from datetime import date
 from pydantic import BaseModel, Field
 from core.logger_config import logger
 
-class StmBase(BaseModel):
+class StmBaseRequest(BaseModel):
   address: str = Field(..., description="住所")
   age: int = Field(..., description="年齢")
   annual_income: int = Field(..., description="年収")
@@ -33,21 +33,29 @@ class StmBase(BaseModel):
   status: str = Field(..., description="ステータス")
   whole_life_insurance_flag: bool = Field(..., description="終身保険フラグ")
 
-class StmCreate(StmBase):
+class StmCreateRequest(StmBaseRequest):
   client_request_token: str = Field(..., description="クライアントリクエストトークン")
 
-class StmUpload(StmBase):
+class StmUploadRequest(StmBaseRequest):
   pass
 
-class StmUpdate(StmBase):
+class StmUpdateRequest(StmBaseRequest):
   version: int = Field(..., description="バージョン")
   client_request_token: str = Field(..., description="クライアントリクエストトークン")
 
-class StmDelete(BaseModel):
+class StmDeleteRequest(BaseModel):
   version: int = Field(..., description="バージョン")
   client_request_token: str = Field(..., description="クライアントリクエストトークン")
 
-class StmResponse(StmBase):
+class StmBulkDelete(BaseModel):
+  id: str = Field(..., description="ID")
+  version: int = Field(..., description="バージョン")
+  client_request_token: str = Field(..., description="クライアントリクエストトークン")
+
+class StmBulkDeleteRequest(BaseModel):
+  items: list[StmBulkDelete] = Field(..., description="削除するアイテムのリスト")
+
+class StmResponse(StmBaseRequest):
   id: str = Field(..., description="ID")
   username: str = Field(..., description="ユーザー名")
   version: int = Field(..., description="バージョン")

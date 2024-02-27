@@ -17,7 +17,6 @@ from core.config import ENVIRONMENT
 from mangum import Mangum
 
 app = FastAPI()
-# handler = Mangum(app) # 本番
 origins = [
   "http://localhost:3000", # ローカル
   # "https://stm-fe.pages.dev", # 本番
@@ -47,3 +46,4 @@ app.include_router(debug_router)
 # エラーハンドラーの追加
 setup_error_handlers(app)
 
+# handler = Mangum(app) # 本番
